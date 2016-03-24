@@ -5,20 +5,13 @@ use Illuminate\Support\ServiceProvider;
 class InstrumentsServiceProvider extends ServiceProvider
 {
 	/**
-	 * @var \Illuminate\Contracts\Events\Dispatcher
-	 */
-	protected $events;
-
-	/**
 	 * Bootstrap the application services.
 	 *
 	 * @return void
 	 */
 	public function boot()
 	{
-		$this->publishes([
-			__DIR__.'/../config/instruments.php' => config_path('instruments.php'),
-		]);
+		$this->package('exolnet/instruments', 'exolnet-instruments', __DIR__.'/..');
 
 		$this->app['instruments']->boot();
 	}
@@ -30,8 +23,6 @@ class InstrumentsServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->mergeConfigFrom(__DIR__.'/../config/instruments.php', 'instruments');
-
 		$this->app->singleton('instruments.factory', function($app) {
 			return new InstrumentsManager($app);
 		});

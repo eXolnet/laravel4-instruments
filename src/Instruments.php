@@ -20,6 +20,11 @@ class Instruments
 	private $driver;
 
 	/**
+	 * @var null|float
+	 */
+	private $requestStartTime = null;
+
+	/**
 	 * Instruments constructor.
 	 *
 	 * @param \Exolnet\Instruments\Drivers\Driver $driver
@@ -53,10 +58,19 @@ class Instruments
 	 */
 	protected function listenHttp()
 	{
-		/** @var \Illuminate\Foundation\Http\Kernel $kernel */
-		$kernel = app(Kernel::class);
+		app('router')->before(function(Request $request) {
+			$this->requestStartTime = microtime(true);
 
-		$kernel->pushMiddleware(InstrumentsMiddleware::class);
+			$this->collectRequest($request);
+
+			app()->error(function(Exception $exception) use ($request) {
+				$this->collectException($request, $exception);
+			});
+		});
+
+		app('router')->after(function ($request, $response) {
+			$this->collectResponse($request, $response);
+		});
 	}
 
 	/**
@@ -153,7 +167,7 @@ class Instruments
 			return 'googlebot';
 		} elseif ($request->ajax()) {
 			return 'ajax';
-		} elseif ($request->pjax()) {
+		} elseif ($request->header('X-PJAX')) {
 			return 'pjax';
 		} elseif ($contentType === null) {
 			return 'raw';
@@ -161,7 +175,7 @@ class Instruments
 			return 'feed';
 		} elseif ($request->wantsJson() || Str::contains($contentType, ['application/xml', 'text/xml'])) {
 			return 'api';
-		} elseif ( ! $request->acceptsHtml()) {
+		} elseif ($contentType !== 'text/html') {
 			return 'other';
 		} elseif (Auth::check()) {
 			return 'user';
@@ -186,16 +200,18 @@ class Instruments
 
 	/**
 	 * @param \Illuminate\Http\Request $request
-	 * @param \Closure $responseBuilder
+	 * @param \Symfony\Component\HttpFoundation\Response $response
 	 * @return mixed
 	 */
-	public function collectResponse(Request $request, Closure $responseBuilder)
+	public function collectResponse(Request $request, Response $response)
 	{
 		$this->collectRequest($request);
 
 		// Collect response time
-		$timeMetric = 'response.'. $this->getRequestContext($request) .'.response_time';
-		$response   = $this->driver->time($timeMetric, $responseBuilder);
+		if ($this->requestStartTime !== null) {
+			$timeMetric = 'response.' . $this->getRequestContext($request) . '.response_time';
+			$this->driver->timing($timeMetric, microtime(true) - $this->requestStartTime);
+		}
 
 		// Collect response code
 		$responseCode = $response instanceof Response ? $response->getStatusCode() : 200;

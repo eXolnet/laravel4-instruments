@@ -1,5 +1,6 @@
 <?php namespace Exolnet\Instruments;
 
+use Config;
 use Exolnet\Instruments\Drivers\LogDriver;
 use Exolnet\Instruments\Drivers\NullDriver;
 use Exolnet\Instruments\Drivers\StatsdDriver;
@@ -12,8 +13,8 @@ class InstrumentsManager extends Manager
 {
 	public function getNamespace()
 	{
-		$application = config('instruments.application') ?: Str::slug(config('app.name', 'unknown'));
-		$server      = config('instruments.server')      ?: str_replace('.', '_', gethostname() ?: 'unknown');
+		$application = Config::get('exolnet-instruments::application') ?: Str::slug(Config::get('app.name', 'unknown'));
+		$server      = Config::get('exolnet-instruments::server')      ?: str_replace('.', '_', gethostname() ?: 'unknown');
 		$environment = $this->app->environment();
 
 		if ( ! $application) {
@@ -30,7 +31,7 @@ class InstrumentsManager extends Manager
 	 */
 	public function getDefaultDriver()
 	{
-		return $this->app['config']['instruments.driver'];
+		return $this->app['config']['exolnet-instruments::driver'];
 	}
 
 	/**
@@ -38,7 +39,7 @@ class InstrumentsManager extends Manager
 	 */
 	protected function createStatsdDriver()
 	{
-		$options = config('instruments.statsd') + [
+		$options = Config::get('exolnet-instruments::statsd') + [
 			'namespace' => $this->getNamespace(),
 		];
 
