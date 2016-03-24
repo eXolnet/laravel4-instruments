@@ -13,7 +13,7 @@ class InstrumentsManager extends Manager
 {
 	public function getNamespace()
 	{
-		$application = Config::get('exolnet-instruments::application') ?: Str::slug(Config::get('app.name', 'unknown'));
+		$application = Config::get('exolnet-instruments::application') ?: Str::slug(str_replace('.', '-', Config::get('app.name')));
 		$server      = Config::get('exolnet-instruments::server')      ?: str_replace('.', '_', gethostname() ?: 'unknown');
 		$environment = $this->app->environment();
 
