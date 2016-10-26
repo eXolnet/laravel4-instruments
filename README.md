@@ -34,14 +34,6 @@ To use the library, you must register the Laravel 4 service provider. Find the `
     )
 ```
 
-## Testing
-
-To run the phpUnit tests, please use:
-
-``` bash
-$ vendor/bin/phpunit -c phpunit.xml
-```
-
 ## License
 
 This code is licensed under the [MIT license](http://choosealicense.com/licenses/mit/). Please see the [license file](LICENSE) for more information.
