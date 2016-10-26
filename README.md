@@ -1,6 +1,6 @@
 # Laravel4 Instruments
 
-This project aim to easily add metric tracking to your Laravel 4 applications. Three drivers are currently supported: StatsD, Log and Null. The following metrics are currently tracked:
+This project aims to easily add metric tracking to your Laravel 4 applications. Three drivers are currently supported: StatsD, Log and Null. The following metrics are currently tracked:
 
 * Request
 * Response
@@ -11,7 +11,7 @@ This project aim to easily add metric tracking to your Laravel 4 applications. T
 * Queue
 * Cache
 
-If your're looking for the Laravel 5 version of this library, see [this project](https://github.com/eXolnet/laravel-instruments).
+If you're looking for the Laravel 5 version of this library, see [this project](https://github.com/eXolnet/laravel-instruments).
 
 ## Install - WIP
 
@@ -39,7 +39,7 @@ To use the library, you must register the Laravel 4 service provider. Find the `
 To run the phpUnit tests, please use:
 
 ``` bash
-$ vendor/bin/phpunit -c phpunix.xml
+$ vendor/bin/phpunit -c phpunit.xml
 ```
 
 ## License
